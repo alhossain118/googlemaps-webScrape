@@ -77,10 +77,6 @@ app.service('User', function($http, $auth, $q, $rootScope, socket) {
 // })
 
 app.service('Location', function($http){
-  this.search = (term,location) => {
-    console.log('hit');
-    return $http.get(`/api/yelps/search/${term}/${location}`)
-  }
   this.getData = (data) => {
     return $http.get(`/api/scrapes/${data}`)
   }

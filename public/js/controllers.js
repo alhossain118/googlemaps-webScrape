@@ -70,11 +70,14 @@ app.controller('usersCtrl', function($scope, User, Users) {
     console.log('data:', data);
   });
 });
-app.controller('searchMapsCtrl', function($scope, uiGmapGoogleMapApi,Location,$rootScope){
+app.controller('searchMapsCtrl', function($scope, uiGmapGoogleMapApi,Location,$rootScope,$state){
   console.log('searchMapsCtrl!');
 
   var longitude;
   var latitude;
+
+  $scope.showMaps = false;
+
   $scope.searchLocation = (data) => {
     // console.log("line 85", data);
     Location.getData(data)
@@ -83,64 +86,208 @@ app.controller('searchMapsCtrl', function($scope, uiGmapGoogleMapApi,Location,$r
       // console.log(res.data.longitude);
       longitude = res.data.longitude.replace(/°/gi, '.').replace(/′/gi, '.')
       latitude = res.data.latitude.replace(/°/gi, '.').replace(/′/gi, '.')
+      console.log(longitude.replace(/″/gi, '.'));
+      console.log(latitude.replace(/″/gi, '.'));
       // console.log('test', longitude.slice(2,2));
       // longitude = parseInt((longitude.slice(0,2))) + parseInt(((longitude.slice(3,5))/60).toFixed(2)) + parseInt(((longitude.slice(5,7))/60).toFixed(2))
-     var long1 = parseInt(longitude.slice(0,2))
-     var long2 =parseInt(longitude.slice(3,5)) / 60;
-     var long3 =parseInt(longitude.slice(6,8)) /3600;
 
-     longitude = (long1 + long2 + long3).toFixed(2).toString() + longitude.slice(8,10)
+      console.log("WOJOOJOJOJOJO", longitude.length);
+      console.log('longitude', longitude);
+      console.log("latitude", latitude);
+      // if(longitude.length ===)
+      if(longitude.length == 10){
+        var long1 = parseInt(longitude.slice(0,2))
+        var long2 =parseInt(longitude.slice(3,5)) / 60;
+        var long3 =parseInt(longitude.slice(6,8)) /3600;
+        longitude = (long1 + long2 + long3).toFixed(2).toString() + longitude.slice(8,10)
+
+      }
+      else if(longitude.length == 11){
+        var long1 = parseInt(longitude.slice(0,3))
+        var long2 =parseInt(longitude.slice(4,6)) / 60;
+        var long3 =parseInt(longitude.slice(7,9)) /3600;
+        longitude = (long1 + long2 + long3).toFixed(2).toString() + longitude.slice(9,11)
+      }
 
 
-     var lat1 = parseInt(latitude.slice(0,2))
-     var lat2 =parseInt(latitude.slice(3,5)) / 60;
-     var lat3 =parseInt(latitude.slice(6,8)) /3600;
+      console.log("STUFF,", latitude);
+     if(latitude.length == 10){
+       console.log("STUFF217", latitude);
+       var lat1 = parseInt(latitude.slice(0,2))
+       console.log('lat1', lat1);
+       var lat2 =parseInt(latitude.slice(3,5)) / 60;
+       console.log('lat2', lat2);
+       var lat3 =parseInt(latitude.slice(6,8)) /3600;
+       console.log('lat3', lat3);
 
-     latitude = (lat1 + lat2 + lat3).toFixed(2).toString() + latitude.slice(8,10)
+       latitude = (lat1 + lat2 + lat3).toFixed(2).toString() + latitude.slice(8,10)
+       console.log("STUFF217", latitude);
+     }
+     else if(latitude.length == 11){
+       var lat1 = parseInt(latitude.slice(0,3))
+       var lat2 =parseInt(latitude.slice(4,6)) / 60;
+       var lat3 =parseInt(latitude.slice(7,9)) /3600;
 
-    //  console.log('long4', long4);
-    //  console.log('lat4', lat4);
-
-
-      // console.log('line 47', latitude);
+       latitude = (lat1 + lat2 + lat3).toFixed(2).toString() + latitude.slice(9,11)
+     }
 
 
 
-      // console.log('lat', latitude);
-      // console.log('long', longitude);
+
       if(latitude[latitude.length -1] === "S"){
         latitude =  "-" + latitude.slice(0,5)
+        $rootScope.latt1 = latitude
       }
       else{
         latitude = latitude.slice(0,5)
+        $rootScope.latt1 = latitude
       }
       if(longitude[longitude.length -1] === "W"){
         longitude = "-" + longitude.slice(0,5)
+        $rootScope.longg2 = longitude
       }
       else{
         longitude = longitude.slice(0,5)
+        $rootScope.longg2 = longitude
+
       }
-      // console.log('longitude', typeof longitude)
-      // var str = '37°32′54″N'.replace(/°/gi, '.')
 
       console.log('latitude', latitude)
-      // $rootScope.latitude = latitude
-      // $rootScope.longitude = longitude
-
       console.log('longitude', longitude)
 
+
+      // console.log("scope", $scope);
+      $scope.showMaps = true;
+      $state.go('searchMapsGoogleMaps', {latitudeId: latitude}, {longitudeId: longitude})
+    })
+    .catch(err => {
+      console.log("error");
+      alert('not found')
     })
 
 
 
   }///////	geo:32.775833,-96.796667
+
   // console.log('rootScope', $scope.latitude);
-  $scope.map = { center: { latitude: 32.78, longitude: -96.80}, zoom: 8 };
+  $scope.map = { center: { latitude: $scope.latt1, longitude: $scope.longg2}, zoom: 8 };
 
 
   uiGmapGoogleMapApi.then(function(maps) {
 
       });
 
+
+})
+app.controller('searchMapsGoogleMapsCtrl', function($scope,uiGmapGoogleMapApi, Location, $rootScope,$state){
+
+  console.log("$scope", $scope.latt1);
+  console.log("$scope", $scope.longg2);
+
+  var longitude;
+  var latitude;
+  $scope.searchLocation = (data) => {
+    // console.log("line 85", data);
+    Location.getData(data)
+    .then(res => {
+
+      longitude = res.data.longitude.replace(/°/gi, '.').replace(/′/gi, '.')
+      latitude = res.data.latitude.replace(/°/gi, '.').replace(/′/gi, '.')
+      console.log(longitude.replace(/″/gi, '.'));
+      console.log(latitude.replace(/″/gi, '.'));
+
+      if(longitude.length == 9){
+        console.log("Logged!!!!!!!!!!");
+        var long1 = parseInt(longitude.slice(0,1))
+        var long2 =parseInt(longitude.slice(2,4)) / 60;
+        var long3 =parseInt(longitude.slice(5,7)) /3600;
+        longitude = (long1 + long2 + long3).toFixed(2).toString() + longitude.slice(7,9)
+        console.log(longitude);
+      }
+      else if(longitude.length == 10){
+        var long1 = parseInt(longitude.slice(0,2))
+        var long2 =parseInt(longitude.slice(3,5)) / 60;
+        var long3 =parseInt(longitude.slice(6,8)) /3600;
+        longitude = (long1 + long2 + long3).toFixed(2).toString() + longitude.slice(8,10)
+
+      }
+      else if(longitude.length == 11){
+        var long1 = parseInt(longitude.slice(0,3))
+        var long2 =parseInt(longitude.slice(4,6)) / 60;
+        var long3 =parseInt(longitude.slice(7,9)) /3600;
+        longitude = (long1 + long2 + long3).toFixed(2).toString() + longitude.slice(9,11)
+      }
+
+      if(latitude.length == 9){
+
+        var lat1 = parseInt(latitude.slice(0,1))
+        var lat2 =parseInt(latitude.slice(2,4)) / 60;
+        var lat3 =parseInt(latitude.slice(5,7)) /3600;
+
+        latitude = (lat1 + lat2 + lat3).toFixed(2).toString() + latitude.slice(7,9)
+      }
+
+     else if(latitude.length == 10){
+
+       var lat1 = parseInt(latitude.slice(0,2))
+       var lat2 =parseInt(latitude.slice(3,5)) / 60;
+       var lat3 =parseInt(latitude.slice(6,8)) /3600;
+
+       latitude = (lat1 + lat2 + lat3).toFixed(2).toString() + latitude.slice(8,10)
+     }
+     else if(latitude.length == 11){
+       var lat1 = parseInt(latitude.slice(0,3))
+       var lat2 =parseInt(latitude.slice(4,6)) / 60;
+       var lat3 =parseInt(latitude.slice(7,9)) /3600;
+
+       latitude = (lat1 + lat2 + lat3).toFixed(2).toString() + latitude.slice(9,11)
+     }
+
+
+
+
+      if(latitude[latitude.length -1] === "S"){
+        latitude =  "-" + latitude.slice(0,5)
+        $rootScope.latt1 = latitude
+      }
+      else{
+        latitude = latitude.slice(0,5)
+        $rootScope.latt1 = latitude
+      }
+
+
+      if(longitude[longitude.length -1] === "W"){
+        longitude = "-" + longitude.slice(0,5)
+        $rootScope.longg2 = longitude
+      }
+      else{
+        longitude = longitude.slice(0,5)
+        $rootScope.longg2 = longitude
+
+      }
+
+      console.log('latitude', latitude)
+      console.log('longitude', longitude)
+
+
+      // console.log("scope", $scope);
+      $scope.showMaps = true;
+      $state.go('searchMapsGoogleMaps', {latitudeId: latitude}, {longitudeId: longitude})
+    })
+    .catch(err => {
+      console.log("error");
+      alert('not found')
+    })
+
+
+
+  }
+
+  $scope.map = { center: { latitude: $scope.latt1, longitude: $scope.longg2}, zoom: 8 };
+
+
+  uiGmapGoogleMapApi.then(function(maps) {
+
+      });
 
 })

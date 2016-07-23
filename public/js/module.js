@@ -10,7 +10,7 @@ var app = angular.module('myApp', ['ui.router', 'satellizer', 'btford.socket-io'
   )
   .config(function(uiGmapGoogleMapApiProvider) {
     uiGmapGoogleMapApiProvider.configure({
-        key: 'AIzaSyBsk5azwzqdFVPhctQ79gCqUuY82mD6ZM8',
+        key: 'process.env.MAPS_SECRET',
         v: '3.20', //defaults to latest 3.X anyhow
         libraries: 'weather,geometry,visualization'
     });
@@ -69,6 +69,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: '/searchMaps',
       templateUrl: '/html/searchMaps.html',
       controller: 'searchMapsCtrl'
+    })
+    .state('searchMapsGoogleMaps', {
+      url: '/searchMapsGoogleMaps/:latitudeId/maps/:longitudeId',
+      templateUrl: '/html/searchMapsGoogleMaps.html',
+      controller: 'searchMapsGoogleMapsCtrl'
     })
 
   $urlRouterProvider.otherwise('/');
